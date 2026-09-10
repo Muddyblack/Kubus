@@ -44,6 +44,19 @@ Electron versions that only offer a download link. Users of those versions must
 install an updater-enabled release once manually. In particular, old unsigned Mac
 apps cannot be upgraded into the signed release through Squirrel.Mac.
 
+## After the release: bump the Nix package
+
+The [Nix package](../install/nix.md) pins a released AppImage by version and
+hash, so it needs one commit once the release assets exist:
+
+```bash
+nix/update.sh          # or nix/update.sh v0.1.0 for a specific tag
+git commit -am "chore(nix): kubus 0.1.0"
+```
+
+Merging that to `main` triggers the Nix workflow, which builds the package and
+pushes it to the binary cache so Nix users download rather than build.
+
 ## Apple signing and notarization
 
 Release builds use **Developer ID Application: Florian Schwarz (DJY795VD98)** and

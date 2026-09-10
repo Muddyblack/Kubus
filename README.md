@@ -19,6 +19,15 @@ releases, and more.
 - [Desktop releases](https://github.com/FloSch62/Kubus/releases)
 
 
+## Run With Nix
+
+```bash
+nix run github:FloSch62/Kubus
+```
+
+See the [Nix & NixOS install guide](https://kubus-app.dev/install/nix/) for
+declarative NixOS setup and the binary cache.
+
 ## Run From Source
 
 Requires Node.js >= 24.21 and pnpm 12:

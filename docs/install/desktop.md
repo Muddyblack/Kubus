@@ -55,6 +55,14 @@ Grab the installer for your platform from the **[releases page](https://github.c
         kubus
         ```
 
+    === "Nix / NixOS"
+
+        ```bash
+        nix run github:FloSch62/Kubus
+        ```
+
+        See [Nix & NixOS](nix.md) for declarative installs and the binary cache.
+
 ## Updating
 
 The macOS app, Windows installer and Linux AppImage check GitHub Releases shortly

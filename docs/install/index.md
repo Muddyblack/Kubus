@@ -30,6 +30,9 @@ platform without a packaged build), run it **from source**.
 
 </div>
 
+On **NixOS** (or anywhere with Nix), skip both and install the flake instead:
+`nix run github:FloSch62/Kubus`. See [Nix & NixOS](nix.md).
+
 ## Before you start
 
 Kubus drives your clusters through your existing **kubeconfig**, the same file `kubectl`
