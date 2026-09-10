@@ -56,9 +56,10 @@ nix run github:FloSch62/Kubus
 
 ## Don't build it yourself
 
-Every push to `main` builds the package in CI and pushes the closure to a
-[Cachix](https://cachix.org) binary cache, so an install is a download rather
-than a build. Trust the cache once:
+The Nix CI workflow (`nix/ci/nix-workflow.yml`, copy it to
+`.github/workflows/nix.yml`) builds the package on every push to `main` and
+pushes the closure to a [Cachix](https://cachix.org) binary cache, so an install
+is a download rather than a build. Trust the cache once:
 
 ```nix
 nix.settings = {

@@ -1,0 +1,61 @@
+# Copy this file to .github/workflows/nix.yml to enable it.
+#
+# It lives here because the branch it arrived on was pushed by a token
+# without the GitHub `workflow` scope, which may not write .github/workflows.
+# The contents are otherwise final - no edits needed beyond the move, plus a
+# CACHIX_AUTH_TOKEN repository secret if you want the binary cache.
+
+name: Nix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - flake.nix
+      - flake.lock
+      - nix/**
+      - .github/workflows/nix.yml
+  pull_request:
+    paths:
+      - flake.nix
+      - flake.lock
+      - nix/**
+      - .github/workflows/nix.yml
+  workflow_dispatch:
+
+concurrency:
+  group: nix-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Read once so the Cachix step can be skipped on forks and before the
+      # cache is set up, without the workflow failing.
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      # Publishes the built closure so `nix run`/`nix profile install` users
+      # download Kubus instead of building it. No-op without the token.
+      - uses: cachix/cachix-action@v16
+        if: env.CACHIX_AUTH_TOKEN != ''
+        with:
+          name: kubus
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          # Only publish from the canonical branch; PR builds stay local.
+          pushFilter: ${{ github.ref == 'refs/heads/main' && '' || '.*' }}
+      - name: Flake checks
+        run: nix flake check --print-build-logs
+      - name: Build
+        run: nix build .#kubus --print-build-logs
+      - name: Verify the wrapped app
+        run: |
+          test -x result/bin/kubus
+          test -f result/share/applications/kubus.desktop
+          grep -q '^Exec=kubus %U$' result/share/applications/kubus.desktop
+          test -f result/share/icons/hicolor/256x256/apps/kubus.png
